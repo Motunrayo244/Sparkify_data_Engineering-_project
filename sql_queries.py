@@ -8,10 +8,18 @@ time_table_drop = "DROP TABLE IF EXISTS time_info"
 
 # CREATE TABLES
 
-songplay_table_create = (""" CREATE TABLE IF NOT EXISTS songs_play(songplay_id INT GENERATED ALWAYS AS IDENTITY, start_time TIMESTAMP, user_id INT, level VARCHAR(50), \
-    song_id VARCHAR(25), artist_id VARCHAR(25), session_id VARCHAR(25), location VARCHAR(500), user_agent TEXT,\
-    
-    PRIMARY KEY (songplay_id),\
+songplay_table_create = (""" CREATE TABLE IF NOT EXISTS songs_play\
+    (\
+        songplay_id INT GENERATED ALWAYS AS IDENTITY, \
+        start_time TIMESTAMP NOT NULL, \
+        user_id INT NOT NULL, \
+        level VARCHAR(50), \
+        song_id VARCHAR(25) NOT NULL, \
+        artist_id VARCHAR(25) NOT NULL, \
+        session_id VARCHAR(25) NOT NULL, \
+        location VARCHAR(500), \
+        user_agent TEXT,\
+        PRIMARY KEY (songplay_id),\
     CONSTRAINT fk_user  FOREIGN KEY(user_id) \
    REFERENCES users(user_id)\
    ON DELETE RESTRICT\
@@ -34,42 +42,85 @@ songplay_table_create = (""" CREATE TABLE IF NOT EXISTS songs_play(songplay_id I
        );      
 """)
 
-user_table_create = (""" CREATE TABLE IF NOT EXISTS users (user_id INT NOT NULL, first_name VARCHAR(50), last_name VARCHAR(50),\
-     gender VARCHAR(10), level VARCHAR(50), \
+user_table_create = (""" CREATE TABLE IF NOT EXISTS users (user_id INT NOT NULL, \
+    first_name VARCHAR(50) NOT NULL, \
+    last_name VARCHAR(50) NOT NULL,\
+    gender VARCHAR(10), \
+    level VARCHAR(50), \
     PRIMARY KEY (user_id));
 """)
 
-song_table_create = (""" CREATE TABLE IF NOT EXISTS songs (song_id VARCHAR(50) NOT NULL, title VARCHAR(500), artist_id VARCHAR(25),\
-    year INT, duration NUMERIC, PRIMARY KEY(song_id));
+song_table_create = (""" CREATE TABLE IF NOT EXISTS songs (song_id VARCHAR(50) NOT NULL, \
+    title VARCHAR(500) NULL, \
+    artist_id VARCHAR(25) NOT NULL,\
+    year INT, \
+    duration NUMERIC, \
+    PRIMARY KEY(song_id));
 """)
 
-artist_table_create = (""" CREATE TABLE IF NOT EXISTS artists(artist_id VARCHAR(50) NOT NULL, name VARCHAR(500), location VARCHAR(250), \
-    latitude DECIMAL(11,8), longitude DECIMAL(11,8), PRIMARY KEY(artist_id));
+artist_table_create = (""" CREATE TABLE IF NOT EXISTS artists(artist_id VARCHAR(50) NOT NULL, \
+    name VARCHAR(500) NULL, \
+    location VARCHAR(250), \
+    latitude DECIMAL(11,8), \
+    longitude DECIMAL(11,8), \
+    PRIMARY KEY(artist_id));
 """)
 
-time_table_create = (""" CREATE TABLE IF NOT EXISTS time_info (start_time TIMESTAMP NOT NULL, hour INT, day INT, week INT, month INT, year INT, \
-    weekday VARCHAR(10),PRIMARY KEY(start_time));
+time_table_create = (""" CREATE TABLE IF NOT EXISTS time_info (start_time TIMESTAMP NOT NULL,\
+    hour INT, \
+    day INT, \
+    week INT, \
+    month INT, \
+    year INT, \
+    weekday VARCHAR(10), \
+    PRIMARY KEY(start_time));
 """)
 
 # INSERT RECORDS
 
-songplay_table_insert = (""" INSERT INTO songs_play(start_time, user_id, level, song_id, artist_id, session_id, location, user_agent) \
+songplay_table_insert = (""" INSERT INTO songs_play(start_time, \
+    user_id , \
+    level, \
+    song_id, \
+    artist_id, \
+    session_id, \
+    location, \
+    user_agent) \
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
 """)
 
-user_table_insert = (""" INSERT INTO users(user_id, first_name, last_name, gender,level) \
+user_table_insert = (""" INSERT INTO users(user_id, \
+    first_name, \
+    last_name, \
+    gender,level) \
     VALUES(%s,%s,%s,%s,%s);
 """)
 
-song_table_insert = ("""INSERT INTO songs(song_id,title,artist_id,year, duration)\
+song_table_insert = ("""INSERT INTO songs(song_id,\
+    title,\
+    artist_id,\
+    year, \
+    duration)\
     VALUES (%s,%s,%s,%s,%s);
 """)
 
-artist_table_insert = (""" INSERT INTO artists(artist_id, name, location, latitude, longitude) VALUES(%s,%s,%s,%s,%s);
+artist_table_insert = (""" INSERT INTO artists(artist_id, \
+    name, \
+    location, \
+    latitude, \
+    longitude) \
+    VALUES(%s,%s,%s,%s,%s);
 """)
 
 
-time_table_insert = (""" INSERT INTO time_info(start_time, hour, day, week, month, year, weekday) VALUES (%s,%s,%s,%s,%s,%s,%s);
+time_table_insert = (""" INSERT INTO time_info(start_time, \
+    hour, \
+    day, \
+    week, \
+    month, \
+    year, \
+    weekday) \
+    VALUES (%s,%s,%s,%s,%s,%s,%s);
 """)
 
 # FIND SONGS
