@@ -129,11 +129,14 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = (pd.to_datetime(row.ts, unit='ms'), int(row.userId), row.level, songid, artistid, row.sessionId, row.location, row.userAgent)
-        cur.execute(songplay_table_insert, songplay_data)
+        if results:
+            songplay_data = (pd.to_datetime(row.ts, unit='ms'), int(row.userId), row.level, songid, artistid, row.sessionId, row.location, row.userAgent)
+            cur.execute(songplay_table_insert, songplay_data)
 
 
 def process_data(cur, conn, filepath, func):
+    """ The process data is used to read the all the .json files in the filepath provided in the argument.
+    this then calls the function that is passed in the func argument to process the data further."""
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -146,7 +149,7 @@ def process_data(cur, conn, filepath, func):
     print('{} files found in {}'.format(num_files, filepath))
     
     func(cur,all_files)
-    conn.commit
+    # conn.commit
     print('{} files processed.'.format(num_files))
 
     # iterate over files and process
@@ -156,14 +159,23 @@ def process_data(cur, conn, filepath, func):
     #     print('{}/{} files processed.'.format(i, num_files))
 
 def generate_filename(data):
-    upload_filename =datetime.datetime.now().strftime("%m%d%Y%H%M%S%f")+data
+    """The generate_filename function takes a name and creates a filepath that is used to save .csv files in th "uploaded_data". 
+    The filename is appended with the timestamp the function is ran; this will help make the files created unique."""
+    upload_filename = datetime.datetime.now().strftime("%m%d%Y%H%M%S%f")+data
     upload_filename = upload_filename + ".csv"
     uploaded_filepath = "uploaded_data\\" + upload_filename
     return uploaded_filepath
 
 def main():
-    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
-    cur = conn.cursor()
+    try:
+        conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
+        conn.set_session(autocommit=True)
+        cur = conn.cursor()
+        print("connection to sparkifydb Database was successfull")
+    except psycopg2.Error as e:
+        print("Connection to the sparkifydb database was not successful")
+        print(e)
+        conn.close()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
     print("start log_file processing")

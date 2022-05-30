@@ -17,6 +17,7 @@ def create_database():
     except psycopg2.Error as e:
         print("Connection to the postgres database was not successful")
         print(e)
+        conn.close()
     
     # create sparkify database with UTF8 encoding
     cur.execute("DROP DATABASE IF EXISTS sparkifydb")
@@ -36,6 +37,7 @@ def create_database():
     except psycopg2.Error as e:
         print("Connection to the sparkifydb database was not successful")
         print(e)
+        conn.close()
     
     
     return cur, conn
@@ -54,6 +56,7 @@ def drop_tables(cur, conn):
         except psycopg2.Error as e:
             print("Error encountered while dropping table",query)
             print(e)
+            conn.close()
 
 def create_tables(cur, conn):
     """
@@ -68,6 +71,7 @@ def create_tables(cur, conn):
         except psycopg2.Error as e:
             print("Error encountered while creating table",query)
             print(e)
+            conn.close()
 
 
 def main():
